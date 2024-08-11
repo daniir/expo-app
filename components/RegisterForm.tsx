@@ -2,6 +2,9 @@ import React from 'react';
 import { View, Text, TextInput, Pressable } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { IRegisterUser } from '../types';
+import { registerUser } from '../database/userQueries';
+import { Alert } from 'react-native';
+import { router } from 'expo-router';
 
 export function Registerform() {
   const {
@@ -12,8 +15,26 @@ export function Registerform() {
     watch,
   } = useForm<IRegisterUser>();
 
-  const onSubmit: SubmitHandler<IRegisterUser> = (data) => {
-    console.log({ data });
+  const onSubmit: SubmitHandler<IRegisterUser> = async (data) => {
+    const createUser = await registerUser(data);
+
+    if (!createUser) {
+      return Alert.alert(
+        'Usuario existente',
+        'No ha sido posible registrar al usuario, favor de ingresar un usuario nuevo'
+      );
+    }
+
+    return Alert.alert(
+      'Usuario creado',
+      'El usuario ha sido creado con exito',
+      [
+        {
+          text: 'Ok',
+          onPress: () => router.back(),
+        },
+      ]
+    );
   };
 
   return (
@@ -91,6 +112,7 @@ export function Registerform() {
             <TextInput
               className="text-center border border-gray-200 bg-gray-200 rounded-md w-full p-1.5 my-2"
               placeholder="usuario@correo.com"
+              keyboardType="email-address"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -154,7 +176,7 @@ export function Registerform() {
           <View className="flex-row justify-between items-center">
             <TextInput
               className="text-center border border-gray-200 bg-gray-200 rounded-md w-full p-1.5 my-2"
-              placeholder="Contraseña"
+              placeholder="Confirmar contraseña"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}

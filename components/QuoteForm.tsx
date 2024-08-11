@@ -5,15 +5,19 @@ import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { IModalInfo, IQuoteForm } from '../types';
 import { coverageList, insuranceTypeList } from '../data';
 import { MCIcons, MIcons } from './Icons';
+import { useAuthContext, useModalContext } from '../hooks';
+import { generateSequence } from '../database/sequentialQuery';
 
 type Props = {
   submitData: (data: IModalInfo) => void;
-  handleModal: () => void;
 };
 
-export function QuoteForm({ submitData, handleModal }: Props) {
+export function QuoteForm({ submitData }: Props) {
   const [openType, setOpenType] = useState<boolean>(false);
   const [openCoverage, setOpenCoverage] = useState<boolean>(false);
+
+  const { auth } = useAuthContext();
+  const { handleModal } = useModalContext();
 
   const {
     control,
@@ -22,10 +26,11 @@ export function QuoteForm({ submitData, handleModal }: Props) {
     reset,
   } = useForm<IQuoteForm>();
 
-  const onSubmit: SubmitHandler<IQuoteForm> = (data) => {
+  const onSubmit: SubmitHandler<IQuoteForm> = async (data) => {
     const { brand, model, year, price, insuranceType, coverage } = data;
 
     const amount = (price / (new Date().getFullYear() - data.year)) * 0.35;
+    const sequential = await generateSequence();
 
     const modalInfo: IModalInfo = {
       brand,
@@ -35,20 +40,14 @@ export function QuoteForm({ submitData, handleModal }: Props) {
       insuranceType,
       coverage,
       amount,
-      sequential: 1,
-      fullName: 'Miguel Flores',
+      sequential,
+      fullName: auth?.auth.fullName!,
     };
 
     submitData(modalInfo);
     handleModal();
 
     reset();
-  };
-
-  const handleToggleList = () => {
-    if (openCoverage) setOpenCoverage(!openCoverage);
-
-    setOpenType(!openType);
   };
 
   return (
@@ -213,7 +212,7 @@ export function QuoteForm({ submitData, handleModal }: Props) {
               textStyle={style.listText}
               dropDownContainerStyle={style.size}
               open={openType}
-              setOpen={handleToggleList}
+              setOpen={() => setOpenType(!openType)}
               items={insuranceTypeList}
               value={value}
               setValue={(item: any) => onChange(item())}

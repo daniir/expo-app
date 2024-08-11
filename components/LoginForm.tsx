@@ -1,9 +1,14 @@
 import React from 'react';
-import { View, Text, TextInput, Pressable } from 'react-native';
+import { View, Text, TextInput, Pressable, Alert } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { ILoginUser } from '../types';
+import { IAuth, ILoginUser } from '../types';
+import { loginUser } from '../database/userQueries';
+import { useAuthContext } from '../hooks';
+import { router } from 'expo-router';
 
 export function LoginForm() {
+  const { signIn } = useAuthContext();
+
   const {
     control,
     handleSubmit,
@@ -11,8 +16,18 @@ export function LoginForm() {
     reset,
   } = useForm<ILoginUser>();
 
-  const onSubmit: SubmitHandler<ILoginUser> = (data) => {
-    console.log({ data });
+  const onSubmit: SubmitHandler<ILoginUser> = async (data) => {
+    const user = await loginUser(data);
+
+    if (!user)
+      return Alert.alert(
+        'Correo/Contraseña erroneos',
+        'Favor de ingresar los datos de la cuenta correctamente'
+      );
+
+    signIn(user as IAuth);
+    router.replace('/(tabs)');
+
     reset();
   };
 
@@ -37,6 +52,7 @@ export function LoginForm() {
             <TextInput
               className="text-center border border-white bg-white rounded-md w-full p-1.5 my-2"
               placeholder="usuario@correo.com"
+              keyboardType="email-address"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
