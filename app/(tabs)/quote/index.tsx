@@ -1,33 +1,39 @@
 import { useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
-import { Stack } from 'expo-router';
+import { Pressable, ScrollView, Text, View } from 'react-native';
+import { router, Stack } from 'expo-router';
 import { ScreenLayout } from '../../../components/Layouts';
-import { ModalInfo, QuoteForm } from '../../../components';
+import { MIcons, ModalInfo, QuoteForm } from '../../../components';
 import { IModalInfo } from '../../../types';
+import { useModalContext } from '../../../hooks';
 
 export default function QouteForm() {
-  const [vehicule, setVehicule] = useState<IModalInfo | null>(null);
-  const [openModal, setOpenModal] = useState<boolean>(false);
-
-  const handleModal = () => {
-    setOpenModal(!openModal);
-  };
+  const [vehicle, setVehicle] = useState<IModalInfo | null>(null);
+  const { openModal } = useModalContext();
 
   const submitData = (data: IModalInfo) => {
-    setVehicule(data);
+    setVehicle(data);
   };
 
   return (
     <ScreenLayout>
-      <Stack.Screen
-        options={{
-          headerTitle: 'Formulario de cotización',
-          headerTintColor: 'white',
-          headerTitleAlign: 'center',
-          headerTitleStyle: { fontWeight: 'bold' },
-        }}
-      />
       <ScrollView>
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerStyle: { backgroundColor: '#155e75' },
+            headerTitle: 'Formulario de cotización',
+            headerTintColor: 'white',
+            headerTitleAlign: 'center',
+            headerTitleStyle: { fontWeight: 'bold' },
+            headerLeft: () => (
+              <View>
+                <Pressable className="ml-1.5" onPress={() => router.back()}>
+                  <MIcons name="arrow-back" size={24} color="white" />
+                </Pressable>
+              </View>
+            ),
+          }}
+        />
         <View className="mx-2 mb-8">
           <Text className="text-justify">
             Favor de completar el siguiente formulario con los datos necesarios
@@ -36,14 +42,8 @@ export default function QouteForm() {
           </Text>
         </View>
         <View className="flex-1 justify-center items-center">
-          <QuoteForm submitData={submitData} handleModal={handleModal} />
-          {openModal && vehicule && (
-            <ModalInfo
-              openModal={openModal}
-              closeModal={handleModal}
-              modalInfo={vehicule}
-            />
-          )}
+          <QuoteForm submitData={submitData} />
+          {openModal && vehicle && <ModalInfo modalInfo={vehicle} />}
         </View>
       </ScrollView>
     </ScreenLayout>
