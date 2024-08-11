@@ -1,0 +1,54 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["reactNative"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./app.db"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String
+  password  String
+  createdAt DateTime @default(now())
+
+  vehicle Vehicle[]
+}
+
+model Vehicle {
+  id        Int      @id @default(autoincrement())
+  brand     String
+  model     String
+  year      Int
+  createdAt DateTime @default(now())
+
+  owner   User @relation(fields: [ownerId], references: [id])
+  ownerId Int
+
+  policy Policy?
+}
+
+model Policy {
+  id            Int      @id @default(autoincrement())
+  policyNumber  Int
+  vehiclePrice  Decimal
+  insuranceType String
+  coverage      String
+  amount        Decimal
+  createdAt     DateTime @default(now())
+
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+  vehicleId Int     @unique
+}
+
+model Sequential {
+  id            Int @id @default(autoincrement())
+  currentNumber Int
+
+  reatedAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
