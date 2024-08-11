@@ -8,3 +8,11 @@ export interface IRegisterUser extends ILoginUser {
   lastName: string;
   confirmPassword: string;
 }
+
+export interface IAuth {
+  auth: {
+    id: number;
+    fullName: string;
+    isAuth: boolean;
+  };
+}
