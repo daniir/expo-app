@@ -29,7 +29,9 @@ export function QuoteForm({ submitData }: Props) {
   const onSubmit: SubmitHandler<IQuoteForm> = async (data) => {
     const { brand, model, year, price, insuranceType, coverage } = data;
 
-    const amount = (price / (new Date().getFullYear() - data.year)) * 0.35;
+    const yearsDifferences = new Date().getFullYear() - data.year;
+    const years = yearsDifferences <= 0 ? 1 : yearsDifferences;
+    const amount = (price / years) * 0.035;
     const sequential = await generateSequence();
 
     const modalInfo: IModalInfo = {
