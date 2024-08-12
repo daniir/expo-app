@@ -15,6 +15,7 @@ export default function TabsLayout() {
           headerShown: false,
           tabBarStyle: { backgroundColor: '#d1d5db' },
           tabBarActiveTintColor: '#0891b2',
+          tabBarHideOnKeyboard: true,
         }}
       >
         <Tabs.Screen
@@ -23,6 +24,16 @@ export default function TabsLayout() {
             title: 'Inicio',
             tabBarIcon: ({ color }) => (
               <MIcons name="home" size={24} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="camera"
+          options={{
+            title: 'Cámara',
+            tabBarStyle: { display: 'none' },
+            tabBarIcon: ({ color }) => (
+              <MIcons name="photo-camera" size={24} color={color} />
             ),
           }}
         />

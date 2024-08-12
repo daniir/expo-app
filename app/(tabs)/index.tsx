@@ -7,7 +7,7 @@ import { useAuthContext } from '../../hooks';
 import { IPolicyHistory } from '../../types';
 import { getVehiclePolicies } from '../../database/policyQuery';
 
-export default function index() {
+export default function Index() {
   const [data, setData] = useState<IPolicyHistory[]>([]);
   const { auth, signOut } = useAuthContext();
 
