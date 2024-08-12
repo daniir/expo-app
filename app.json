@@ -9,8 +9,7 @@
     "scheme": "expo-app",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "cover"
     },
     "ios": {
       "supportsTablet": true
